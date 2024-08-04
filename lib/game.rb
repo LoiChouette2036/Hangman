@@ -28,24 +28,63 @@ class Game
         @letter_guess
     end
 
+    #def save_game
+    #    Dir.mkdir('saves') unless Dir.exist?('saves') # Create saves directory if it doesn't exist
+    #    File.open('saves/hangman_save.txt', 'w') do |file|
+    #        file.puts Marshal.dump(self) # Serialize the current game state
+    #    end
+    #    puts "Game saved!"
+    #end
     def save_game
         Dir.mkdir('saves') unless Dir.exist?('saves') # Create saves directory if it doesn't exist
-        File.open('saves/hangman_save.txt', 'w') do |file|
+        puts "Enter a name for your save file:"
+        save_name = gets.chomp
+        File.open("saves/#{save_name}_hangman_save.txt", 'w') do |file|
             file.puts Marshal.dump(self) # Serialize the current game state
         end
-        puts "Game saved!"
+        puts "Game saved as #{save_name}_hangman_save.txt!"
     end
 
+    #def self.load_game
+    #    if File.exist?('saves/hangman_save.txt')
+    #        saved_game = File.open('saves/hangman_save.txt', 'r') {|file| Marshal.load(file)}
+    #        puts "Game loaded!"
+    #        return saved_game
+    #    else
+    #        puts "No saved game found."
+    #        return nil
+    #    end
+    #end
+
     def self.load_game
-        if File.exist?('saves/hangman_save.txt')
-            saved_game = File.open('saves/hangman_save.txt', 'r') {|file| Marshal.load(file)}
+        unless Dir.exist?('saves') && !Dir.empty?('saves')
+            puts "No saved games found."
+            return nil
+        end
+    
+        save_files = Dir.glob('saves/*_hangman_save.txt')
+        if save_files.empty?
+            puts "No saved games found."
+            return nil
+        end
+    
+        puts "Available save files:"
+        save_files.each_with_index { |file, index| puts "#{index + 1}: #{File.basename(file, '_hangman_save.txt')}" }
+        puts "Enter the number of the save file you want to load:"
+        file_index = gets.chomp.to_i - 1
+    
+        if file_index.between?(0, save_files.length - 1)
+            saved_game = File.open(save_files[file_index], 'r') { |file| Marshal.load(file) }
             puts "Game loaded!"
             return saved_game
         else
-            puts "No saved game found."
+            puts "Invalid selection."
             return nil
         end
     end
+    
+
+    #########################
 
     def inside_or_not (user_guess, word_being_guessed)
         return if user_guess.nil? # Exit the method if user_guess is nil
