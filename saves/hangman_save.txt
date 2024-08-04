@@ -1,0 +1,2 @@
+o:	Game
+:@word_to_findI"forums:ET:@array_to_discover[I"_;TI"o;T@I"u;T@@:@number_of_tryi: @array_with_incorrect_guess[I"a;TI"i;TI"e;T:@letter_guessI"	save;T
